@@ -10,8 +10,8 @@
 #
 # INSTALLATION
 # ------------
-#   brew tap JFAlexandre/caddy-homelab
-#   brew install JFAlexandre/caddy-homelab/caddy-homelab
+#   brew tap JFAlexandre/caddy
+#   brew install JFAlexandre/caddy/caddy-homelab
 #   sudo brew services start caddy-homelab      # sudo => LaunchDaemon (boot)
 #
 # MISE A JOUR

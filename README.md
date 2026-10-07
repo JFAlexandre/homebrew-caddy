@@ -1,4 +1,4 @@
-# homebrew-caddy-homelab
+# homebrew-caddy
 
 Tap Homebrew pour le Caddy du homelab — Mac Mini M4 (`arm64`).
 
@@ -21,8 +21,8 @@ statiquement au binaire. Sans ce tap, `crowdsec`, `rate_limit`, `layer4`,
 ## Installation
 
 ```sh
-brew tap JFAlexandre/caddy-homelab
-brew install JFAlexandre/caddy-homelab/caddy-homelab
+brew tap JFAlexandre/caddy
+brew install JFAlexandre/caddy/caddy-homelab
 
 # sudo est INDISPENSABLE : sans lui, brew crée un LaunchAgent, qui ne démarre
 # qu'à l'ouverture de session. Un serveur headless veut un LaunchDaemon.
