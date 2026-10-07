@@ -8,20 +8,27 @@
 # statiquement au binaire. Sans ce tap, `crowdsec`, `rate_limit`, `layer4`,
 # `dns.ovh` et `dns.cloudflare` sont absents et le Caddyfile ne s'adapte pas.
 #
+# POURQUOI `caddy-mac-mini` ET NON `caddy`
+# ----------------------------------------
+# Une formule nommee `caddy` entrerait en collision avec celle de homebrew-core,
+# et `brew install caddy` resout vers le CORE : on installerait le Caddy stock,
+# sans plugins, et le Caddyfile echouerait a s'adapter. Le nom distinct rend
+# cette confusion impossible.
+#
 # INSTALLATION
 # ------------
 #   brew tap JFAlexandre/caddy
-#   brew install JFAlexandre/caddy/caddy-homelab
-#   sudo brew services start caddy-homelab      # sudo => LaunchDaemon (boot)
+#   brew install JFAlexandre/caddy/caddy-mac-mini
+#   sudo brew services start caddy-mac-mini     # sudo => LaunchDaemon (boot)
 #
 # MISE A JOUR
 # -----------
-#   Bumper url/revision ci-dessous, pousser, puis `brew upgrade caddy-homelab`.
+#   Bumper url/revision ci-dessous, pousser, puis `brew upgrade caddy-mac-mini`.
 #   NE PAS activer `brew autoupdate --upgrade` : un frontal qui route tout le
 #   reseau ne doit pas changer de version tout seul sans validation.
 
-class CaddyHomelab < Formula
-  desc "Caddy homelab : CrowdSec, rate_limit, layer4, DNS OVH/Cloudflare"
+class CaddyMacMini < Formula
+  desc "Caddy du Mac Mini M4 : CrowdSec, rate_limit, layer4, DNS OVH/Cloudflare"
   homepage "https://caddyserver.com/"
   url "https://github.com/caddyserver/caddy.git",
       tag:      "v2.11.6",
@@ -69,7 +76,7 @@ class CaddyHomelab < Formula
       PAS dans le prefixe Homebrew.
 
       Demarrage :
-        sudo brew services start caddy-homelab
+        sudo brew services start caddy-mac-mini
 
       `sudo` est necessaire : sans lui, brew cree un LaunchAgent qui ne demarre
       qu'a l'OUVERTURE DE SESSION. Un serveur headless a besoin d'un

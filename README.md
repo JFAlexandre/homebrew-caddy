@@ -1,6 +1,7 @@
 # homebrew-caddy
 
 Tap Homebrew pour le Caddy du homelab — Mac Mini M4 (`arm64`).
+La formule s'appelle **`caddy-mac-mini`**.
 
 ## Pourquoi ce tap existe
 
@@ -18,15 +19,22 @@ Or Caddy n'a **aucun chargement de module à l'exécution** : tout est lié
 statiquement au binaire. Sans ce tap, `crowdsec`, `rate_limit`, `layer4`,
 `dns.ovh` et `dns.cloudflare` sont absents, et le Caddyfile ne s'adapte même pas.
 
+## Pourquoi `caddy-mac-mini` et non `caddy`
+
+Une formule nommée `caddy` entrerait en collision avec celle de `homebrew-core`.
+Or **`brew install caddy` résout vers le core** : on installerait le Caddy
+*stock*, sans plugins, et le Caddyfile échouerait à s'adapter. Le nom distinct
+rend cette confusion impossible.
+
 ## Installation
 
 ```sh
 brew tap JFAlexandre/caddy
-brew install JFAlexandre/caddy/caddy-homelab
+brew install JFAlexandre/caddy/caddy-mac-mini
 
 # sudo est INDISPENSABLE : sans lui, brew crée un LaunchAgent, qui ne démarre
 # qu'à l'ouverture de session. Un serveur headless veut un LaunchDaemon.
-sudo brew services start caddy-homelab
+sudo brew services start caddy-mac-mini
 ```
 
 ## Modules compilés
@@ -52,10 +60,10 @@ C'est volontaire : ça permet de changer une route sans jamais recompiler.
 
 ## Mise à jour
 
-1. Bumper `url`/`revision` dans `Formula/caddy-homelab.rb` (récupérer le commit
+1. Bumper `url`/`revision` dans `Formula/caddy-mac-mini.rb` (récupérer le commit
    avec : `curl -s https://api.github.com/repos/caddyserver/caddy/git/tags/<tag>`)
 2. Pousser
-3. Sur le Mac : `brew upgrade caddy-homelab`
+3. Sur le Mac : `brew upgrade caddy-mac-mini`
 
 ⚠ **Ne pas activer `brew autoupdate --upgrade`.** Un frontal qui route tout le
 réseau ne doit pas changer de version seul : une mise à jour silencieuse du
@@ -68,4 +76,4 @@ qui arrive la nuit sans que personne n'ait rien touché.
 caddy list-modules | grep -E 'rate_limit|layer4|dns.providers|crowdsec'
 ```
 
-`brew test caddy-homelab` fait ce contrôle automatiquement.
+`brew test caddy-mac-mini` fait ce contrôle automatiquement.
