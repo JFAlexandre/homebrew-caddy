@@ -49,6 +49,7 @@ sudo brew services start caddy-mac-mini
 | `hslatman/caddy-crowdsec-bouncer/crowdsec` | app CrowdSec |
 | `caddy-dns/ovh` | `dns.providers.ovh` (zone `3wcreations.com`) |
 | `caddy-dns/cloudflare` | `dns.providers.cloudflare` (zone `jfalexandre.ovh`) |
+| `corazawaf/coraza-caddy/v2` | WAF `coraza_waf` — ruleset OWASP CRS **compilé dans le binaire** |
 
 ## Ce que ce repo ne contient PAS
 

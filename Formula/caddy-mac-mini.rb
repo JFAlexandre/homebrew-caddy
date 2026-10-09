@@ -113,6 +113,7 @@ class CaddyMacMini < Formula
     assert_match "dns.providers.ovh",        modules
     assert_match "dns.providers.cloudflare", modules
     assert_match "http.handlers.rate_limit", modules
+    assert_match "http.handlers.waf",        modules
     assert_match "layer4",                   modules
     assert_match "http.handlers.crowdsec",   modules
   end
