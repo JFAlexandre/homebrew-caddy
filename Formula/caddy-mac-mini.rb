@@ -48,6 +48,9 @@ class CaddyMacMini < Formula
   #                                  -> bouncer IP-ban HTTP + L4
   #  caddy-dns/ovh                   -> dns.providers.ovh     (3wcreations.com)
   #  caddy-dns/cloudflare            -> dns.providers.cloudflare (jfalexandre.ovh)
+  #  coraza-caddy                    -> WAF OWASP Coraza, ruleset CRS compile
+  #                                     DANS le binaire (load_owasp_crs) :
+  #                                     aucun fichier de regles a monter.
   MODULES = %w[
     github.com/mholt/caddy-ratelimit
     github.com/mholt/caddy-l4
@@ -57,6 +60,7 @@ class CaddyMacMini < Formula
     github.com/hslatman/caddy-crowdsec-bouncer/crowdsec
     github.com/caddy-dns/ovh
     github.com/caddy-dns/cloudflare
+    github.com/corazawaf/coraza-caddy/v2
   ].freeze
 
   def install
