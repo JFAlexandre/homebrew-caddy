@@ -24,7 +24,10 @@
 #
 # MISE A JOUR
 # -----------
-#   Bumper url/revision ci-dessous, pousser, puis `brew upgrade caddy-mac-mini`.
+#   Les versions epinglees (url/tag, xcaddy, plugins) sont bump par Renovate :
+#   voir la section "TOUT EST EPINGLE" ci-dessous et renovate.json a la racine
+#   du depot. Apres merge d'une PR : `sudo brew update` puis
+#   `brew upgrade caddy-mac-mini`.
 #   NE PAS activer `brew autoupdate --upgrade` : un frontal qui route tout le
 #   reseau ne doit pas changer de version tout seul sans validation.
 #
