@@ -1,0 +1,50 @@
+# Renovate — maintient a jour les versions epinglees de la formule
+# caddy-mac-mini.rb (Caddy, xcaddy et les plugins) ainsi que les actions
+# utilisees par ce workflow.
+#
+# Self-hosted plutot que l'app Mend : le jeton est le GITHUB_TOKEN ephemere
+# du run, scope a ce depot, sans application tierce disposant d'un acces
+# permanent en ecriture.
+#
+# PREREQUIS COTE DEPOT (une seule fois, non automatisable) :
+#   Settings > Actions > General > Workflow permissions
+#     - cocher "Read and write permissions"
+#     - cocher "Allow GitHub Actions to create and approve pull requests"
+#   Sans la seconde case, Renovate s'execute mais echoue a ouvrir ses PR.
+#
+# Verifiable sans attendre : Actions > Renovate > Run workflow (workflow_dispatch).
+
+name: Renovate
+
+on:
+  schedule:
+    # Tous les jours a 04:17 UTC (06:17 Paris en ete), hors heures pleines.
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: renovate
+  cancel-in-progress: false
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Renovate
+        uses: renovatebot/github-action@v46.3.8
+        with:
+          configurationFile: renovate.json
+          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          # Le depot est deja configure : pas de PR d'onboarding.
+          RENOVATE_ONBOARDING: "false"
+          LOG_LEVEL: info

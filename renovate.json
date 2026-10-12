@@ -57,11 +57,8 @@
       "groupName": "caddy-crowdsec-bouncer"
     },
     {
-      "description": "Le WAF Coraza et son ruleset CRS montent ensemble",
-      "matchPackageNames": [
-        "github.com/corazawaf/coraza-caddy/v2",
-        "github.com/corazawaf/coraza-coreruleset/v4"
-      ],
+      "description": "coraza-caddy : une seule entree, volontairement. Le ruleset OWASP CRS (coraza-coreruleset) n'est PAS epingle dans la formule : il arrive en dependance transitive de coraza-caddy et sa version suit donc celle du module. Une regle de groupe sur coraza-coreruleset ne matcherait rien.",
+      "matchPackageNames": ["github.com/corazawaf/coraza-caddy/v2"],
       "groupName": "coraza"
     },
     {
