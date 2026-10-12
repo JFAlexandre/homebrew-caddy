@@ -1,0 +1,85 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+
+  "labels": ["🤖 renovate"],
+  "dependencyDashboard": true,
+  "separateMajorMinor": true,
+  "separateMinorPatch": false,
+  "prConcurrentLimit": 5,
+
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Caddy lui-meme. INDISPENSABLE : le manager homebrew ne couvre PAS les formules a url git (il logue 'Invalid sha256 field' puis skipReason=invalid-sha256). Sans ce manager, la version du coeur du frontal ne serait jamais mise a jour. Datasource `go` et non `github-tags` : le binaire compile bel et bien le module github.com/caddyserver/caddy/v2, et le proxy Go ne demande aucun token (github-tags taperait api.github.com et tomberait sous le rate limit).",
+      "managerFilePatterns": ["/Formula/[^/]+\\.rb$/"],
+      "matchStrings": [
+        "caddyserver/caddy\\.git\",\\s*tag:\\s*\"(?<currentValue>v[\\d.]+)\""
+      ],
+      "datasourceTemplate": "go",
+      "depNameTemplate": "github.com/caddyserver/caddy/v2"
+    },
+    {
+      "customType": "regex",
+      "description": "xcaddy, epingle dans install() : go run .../xcaddy@vX.Y.Z",
+      "managerFilePatterns": ["/Formula/[^/]+\\.rb$/"],
+      "matchStrings": [
+        "caddyserver/xcaddy/cmd/xcaddy@(?<currentValue>v[\\d.]+)"
+      ],
+      "datasourceTemplate": "go",
+      "depNameTemplate": "github.com/caddyserver/xcaddy"
+    },
+    {
+      "customType": "regex",
+      "description": "Modules Caddy a chemin racine : ratelimit, l4, transform-encoder, dns/*, coraza-caddy/vN",
+      "managerFilePatterns": ["/Formula/[^/]+\\.rb$/"],
+      "matchStrings": [
+        "(?<depName>github\\.com/[\\w.-]+/[\\w.-]+(?:/v\\d+)?)@(?<currentValue>v[\\d][^\"\\s]*)"
+      ],
+      "datasourceTemplate": "go"
+    },
+    {
+      "customType": "regex",
+      "description": "caddy-crowdsec-bouncer : 3 sous-paquets, UN seul module. Le datasource go ne resout pas les sous-paquets (404 sur proxy.golang.org), d'ou depName fixe sur la racine.",
+      "managerFilePatterns": ["/Formula/[^/]+\\.rb$/"],
+      "matchStrings": [
+        "github\\.com/hslatman/caddy-crowdsec-bouncer(?:/(?:http|layer4|crowdsec))@(?<currentValue>v[\\d][^\"\\s]*)"
+      ],
+      "datasourceTemplate": "go",
+      "depNameTemplate": "github.com/hslatman/caddy-crowdsec-bouncer"
+    }
+  ],
+
+  "packageRules": [
+    {
+      "description": "Les 3 paquets du bouncer sont UN module : ils montent ensemble, jamais separes",
+      "matchPackageNames": ["github.com/hslatman/caddy-crowdsec-bouncer"],
+      "groupName": "caddy-crowdsec-bouncer"
+    },
+    {
+      "description": "Le WAF Coraza et son ruleset CRS montent ensemble",
+      "matchPackageNames": [
+        "github.com/corazawaf/coraza-caddy/v2",
+        "github.com/corazawaf/coraza-coreruleset/v4"
+      ],
+      "groupName": "coraza"
+    },
+    {
+      "description": "AUCUN automerge sur ce depot, volontairement. Le bump automatique d'un module du frontal sans build verifie est exactement ce que la formule interdit en tete. Un `brew install --build-from-source` manuel valide avant merge ; ajouter une CI macOS est la seule facon de rendre l'automerge sur.",
+      "matchUpdateTypes": ["major", "minor", "patch", "pin", "digest"],
+      "automerge": false
+    },
+    {
+      "description": "Le coeur du frontal (Caddy) : revue manuelle systematique, quelle que soit la mise a jour, et priorite haute",
+      "matchPackageNames": ["caddyserver/caddy"],
+      "labels": ["🤖 renovate", "🔒 frontal"],
+      "prPriority": 20
+    },
+    {
+      "description": "Les majeurs sont marques : caddy 2.x -> 3.x et un majeur de module sont des revues a part",
+      "matchUpdateTypes": ["major"],
+      "labels": ["🤖 renovate", "⚠️ majeur"],
+      "prPriority": 10
+    }
+  ]
+}

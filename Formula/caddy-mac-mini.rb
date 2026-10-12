@@ -6,7 +6,8 @@
 # la formule elle-meme), et les mainteneurs refusent les formules a plugins.
 # Or Caddy n'a AUCUN chargement de module a l'execution : tout est lie
 # statiquement au binaire. Sans ce tap, `crowdsec`, `rate_limit`, `layer4`,
-# `dns.ovh` et `dns.cloudflare` sont absents et le Caddyfile ne s'adapte pas.
+# `dns.ovh`, `dns.cloudflare` et le WAF Coraza sont absents et le Caddyfile ne
+# s'adapte pas.
 #
 # POURQUOI `caddy-mac-mini` ET NON `caddy`
 # ----------------------------------------
@@ -26,41 +27,76 @@
 #   Bumper url/revision ci-dessous, pousser, puis `brew upgrade caddy-mac-mini`.
 #   NE PAS activer `brew autoupdate --upgrade` : un frontal qui route tout le
 #   reseau ne doit pas changer de version tout seul sans validation.
+#
+# TOUT EST EPINGLE — ET C'EST RENOVATE QUI PROPOSE LES BUMPS
+# ----------------------------------------------------------
+# Trois choses sont epinglees, et il n'en faut pas moins :
+#   1. Caddy lui-meme        -> `tag:` (voir la note REVISION ci-dessous)
+#   2. xcaddy (l'outil)      -> `xcaddy@vX.Y.Z` dans install
+#   3. chaque plugin         -> `module@vX.Y.Z` dans MODULES
+#
+# Sans epinglage, `xcaddy build` resout chaque plugin en `@latest` et
+# `go run ...@latest` fait de meme pour xcaddy : deux builds du meme commit de
+# formule peuvent produire des binaires DIFFERENTS. C'est inacceptable pour un
+# frontal qui route tout le reseau — un module upstream casse, et le proxy
+# frontal tombe au prochain rebuild.
+#
+# Renovate (renovate.json a la racine de ce depot) ouvre une PR par bump :
+# les versions ci-dessous sont les SEULES a editer. Rien n'est pousse en
+# `@latest` par Renovate.
+#
+# NOTE REVISION — POURQUOI IL N'Y A PAS DE `revision:`
+# ----------------------------------------------------
+# Le bloc url comportait un `revision: "<sha>"` (commit exact de la balise).
+# Il a ete retire volontairement, pour deux raisons :
+#   - `xcaddy build v#{version}` recupere la source depuis le proxy Go par
+#     VERSION de module, jamais depuis le checkout Homebrew. La revision ne
+#     servait donc a rien pour le binaire produit.
+#   - Renovate ne sait bumper que la balise. Une revision figee survivrait au
+#     bump : le frontal se declarerait en v2.12.0 tout en compilant le commit
+#     de v2.11.6. Un build silencieusement faux est pire que pas de pin.
+# Si un jour la revue veut un pin par commit, il faudra une CI qui recalcule
+# la revision a chaque PR — voir la discussion dans renovate.json.
+#
+# `@v0.0.0-2026...` (transform-encoder) est une PSEUDO-VERSION Go : ce module
+# n'a jamais tague de release. C'est normal, et Renovate sait les bumper.
 
 class CaddyMacMini < Formula
-  desc "Caddy du Mac Mini M4 : CrowdSec, rate_limit, layer4, DNS OVH/Cloudflare"
+  desc "Caddy du Mac Mini M4 : WAF Coraza, rate_limit, layer4, DNS OVH/Cloudflare"
   homepage "https://caddyserver.com/"
   url "https://github.com/caddyserver/caddy.git",
-      tag:      "v2.11.6",
-      revision: "ac834b5dc70a17dca296f47c78c64587d6631cbb"
+      tag: "v2.11.6"
   license "Apache-2.0"
   head "https://github.com/caddyserver/caddy.git", branch: "master"
 
   # Caddy est du Go pur : xcaddy et les plugins sont recuperes a la compilation.
   depends_on "go" => :build
 
-  # --- Liste EXACTE des modules du frontal (identique au Dockerfile valide) ---
+  # --- Liste EXACTE des modules du frontal, CHAQUE version epinglee ---
   #
   #  caddy-ratelimit                 -> http.handlers.rate_limit
   #  caddy-l4                        -> layer4 (+ handlers/matchers)
   #  transform-encoder               -> caddy.logging.encoders.transform
   #  caddy-crowdsec-bouncer/{http,layer4,crowdsec}
   #                                  -> bouncer IP-ban HTTP + L4
-  #  caddy-dns/ovh                   -> dns.providers.ovh     (3wcreations.com)
+  #                                     (3 paquets, UN seul module : les 3
+  #                                      versions doivent rester identiques)
+  #  caddy-dns/ovh                   -> dns.providers.ovh        (3wcreations.com)
   #  caddy-dns/cloudflare            -> dns.providers.cloudflare (jfalexandre.ovh)
-  #  coraza-caddy                    -> WAF OWASP Coraza, ruleset CRS compile
-  #                                     DANS le binaire (load_owasp_crs) :
-  #                                     aucun fichier de regles a monter.
+  #  coraza-caddy/v2                 -> http.handlers.waf (WAF OWASP Coraza) ;
+  #                                     le ruleset CRS est compile DANS le
+  #                                     binaire (load_owasp_crs) : aucun
+  #                                     fichier de regles a monter.
   MODULES = %w[
-    github.com/mholt/caddy-ratelimit
-    github.com/mholt/caddy-l4
-    github.com/caddyserver/transform-encoder
-    github.com/hslatman/caddy-crowdsec-bouncer/http
-    github.com/hslatman/caddy-crowdsec-bouncer/layer4
-    github.com/hslatman/caddy-crowdsec-bouncer/crowdsec
-    github.com/caddy-dns/ovh
-    github.com/caddy-dns/cloudflare
-    github.com/corazawaf/coraza-caddy/v2
+    github.com/mholt/caddy-ratelimit@v0.1.0
+    github.com/mholt/caddy-l4@v0.1.2
+    github.com/caddyserver/transform-encoder@v0.0.0-20260423033309-ba4124974830
+    github.com/hslatman/caddy-crowdsec-bouncer/http@v0.14.1
+    github.com/hslatman/caddy-crowdsec-bouncer/layer4@v0.14.1
+    github.com/hslatman/caddy-crowdsec-bouncer/crowdsec@v0.14.1
+    github.com/caddy-dns/ovh@v1.1.0
+    github.com/caddy-dns/cloudflare@v0.2.4
+    github.com/corazawaf/coraza-caddy/v2@v2.6.2
   ].freeze
 
   def install
@@ -68,7 +104,8 @@ class CaddyMacMini < Formula
 
     with_args = MODULES.flat_map { |m| ["--with", m] }
 
-    system "go", "run", "github.com/caddyserver/xcaddy/cmd/xcaddy@latest",
+    # xcaddy epingle : `@latest` rendrait le build non reproductible.
+    system "go", "run", "github.com/caddyserver/xcaddy/cmd/xcaddy@v0.4.7",
            "build", "v#{version}",
            "--output", bin/"caddy",
            *with_args
@@ -85,6 +122,9 @@ class CaddyMacMini < Formula
       `sudo` est necessaire : sans lui, brew cree un LaunchAgent qui ne demarre
       qu'a l'OUVERTURE DE SESSION. Un serveur headless a besoin d'un
       LaunchDaemon, qui demarre au boot.
+
+      Les versions de Caddy, xcaddy et des plugins sont epinglees ; Renovate
+      propose les bumps par PR (voir renovate.json a la racine du tap).
     EOS
   end
 
