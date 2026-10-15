@@ -68,7 +68,7 @@ class CaddyMacMini < Formula
   desc "Caddy du Mac Mini M4 : WAF Coraza, rate_limit, layer4, DNS OVH/Cloudflare"
   homepage "https://caddyserver.com/"
   url "https://github.com/caddyserver/caddy.git",
-      tag: "v2.11.6"
+      tag: "v2.11.7"
   license "Apache-2.0"
   head "https://github.com/caddyserver/caddy.git", branch: "master"
 
