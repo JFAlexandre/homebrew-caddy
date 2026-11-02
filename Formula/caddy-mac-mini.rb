@@ -94,9 +94,9 @@ class CaddyMacMini < Formula
     github.com/mholt/caddy-ratelimit@v0.1.0
     github.com/mholt/caddy-l4@v0.1.2
     github.com/caddyserver/transform-encoder@v0.0.0-20260423033309-ba4124974830
-    github.com/hslatman/caddy-crowdsec-bouncer/http@v0.14.1
-    github.com/hslatman/caddy-crowdsec-bouncer/layer4@v0.14.1
-    github.com/hslatman/caddy-crowdsec-bouncer/crowdsec@v0.14.1
+    github.com/hslatman/caddy-crowdsec-bouncer/http@v0.15.0
+    github.com/hslatman/caddy-crowdsec-bouncer/layer4@v0.15.0
+    github.com/hslatman/caddy-crowdsec-bouncer/crowdsec@v0.15.0
     github.com/caddy-dns/ovh@v1.1.0
     github.com/caddy-dns/cloudflare@v0.2.4
     github.com/corazawaf/coraza-caddy/v2@v2.6.2
