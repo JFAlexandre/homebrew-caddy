@@ -92,7 +92,7 @@ class CaddyMacMini < Formula
   #                                     fichier de regles a monter.
   MODULES = %w[
     github.com/mholt/caddy-ratelimit@v0.1.0
-    github.com/mholt/caddy-l4@v0.1.2
+    github.com/mholt/caddy-l4@v0.1.3
     github.com/caddyserver/transform-encoder@v0.0.0-20260423033309-ba4124974830
     github.com/hslatman/caddy-crowdsec-bouncer/http@v0.14.1
     github.com/hslatman/caddy-crowdsec-bouncer/layer4@v0.14.1
